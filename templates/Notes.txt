@@ -1,0 +1,14 @@
+1. In frameworks like Django or Flask, static files are usually served from a designated static/ folder (e.g., static/style/demo6.css) rather than a templates/ folder.
+
+2. These were showing up in console:
+127.0.0.1 - - [09/Nov/2026 19:32:49] "GET /static/js/demo6.js HTTP/1.1" 304 -
+127.0.0.1 - - [09/Nov/2026 19:32:49] "GET /static/style/demo6.css HTTP/1.1" 304 
+
+google says:
+The HTTP 304 "Not Modified" status code is not actually an error; it is a normal performance optimization. One point of agreement among users on Stack Overflow is that it is an expected, successful response. It tells your web browser that the webpage or file you are trying to load hasn't changed since the last time you visited it, so the browser can just load its local cached copy instead of wasting time downloading it again.
+
+3. how to access values sent by flask render_template in javascript file?
+"You cannot access Jinja2 variables directly inside a separate, static .js file because Flask renders HTML templates on the server before JavaScript ever executes in the user's browser.
+To get around this, you can use one of two standard approaches: using HTML data-* attributes (best for discrete variables) or defining global variables in an inline script block (best for large objects or configuration data)."
+
+"to add the data to a data- attribute on an HTML tag. In this case, you must use single quotes around the value, not double quotes, otherwise you will produce invalid or unsafe HTML." (https://flask.palletsprojects.com/en/stable/patterns/javascript/)

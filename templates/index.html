@@ -1,0 +1,79 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Wordle Letter Counts and Patterns Demo</title>
+    </head>
+<link rel="stylesheet" href="static/style/demo6.css">
+    <body>
+        <h1>Wordle Letter Counts and Patterns Demo</h1>
+        <div class="container">
+            <div class="tab-header">
+                <div class="tab-link" onclick="show_tab(0)">
+                    Home
+                </div>
+                <div class="tab-link" onclick="show_tab(1)">
+                    Table
+                </div>
+                <div class="tab-link" onclick="show_tab(2)">
+                    Graph
+                </div>
+                <div class="tab-link" onclick="show_tab(3)">
+                    About
+                </div>
+            </div>
+            <div class="tab-content active">
+                <h1>Home</h1>
+                <p>
+                    <h2>Wordle Patterns and Counts as of {{last_date}}</h2>
+                </p>
+                <p></p>
+                <label for="year_select">Choose a year:</label>
+	            <select name="year_select" id="year_select" required>
+  		        <option value="" selected disabled>-- Select a year --</option>
+	            </select>
+                <label for="month_select">Choose a month:</label>
+	            <select name="month_select" id="month_select">
+  		        <option value="" selected disabled>-- Select a month --</option>
+	            </select>
+                <p></p>
+                <button type="button" name="submit_selection" id="submit_selection" onclick="show_vals()">Submit Selection</button>
+                <button type="button" name="clear_selection" id="clear_selection" onclick="window.location.reload()">Clear Selection</button>
+                <p></p>
+            </div>
+            <div class="tab-content">
+                <h2 id="counts_header">Counts for all answers</h2>
+                <p>Please click on any button to show the corresponding visualization</p>
+                <!-- The '| safe' filter tells Flask not to escape the HTML tags -->
+                <div name="show_table" id="show_table">
+                    {{ table_var | safe }}
+                </div>
+            </div>
+            <div class="tab-content">
+                <!--<h2>Graph for selected counts</h2>-->
+                <h2 id="graph_header">Counts for all answers</h2>
+                <!-- Render the base64 string directly inside the image source -->
+                <div class="graph-container">
+                    <img id="graph" src="data:image/png;base64,{{ plot_var }}" alt="Matplotlib Graph">
+                </div>
+            </div>
+            <div class="tab-content">
+                <h1>About</h1>
+                <p></p>
+                <h2>Lalitha Guda</h1>
+                <p></p>
+                <a href="https://github.com/lalitha2019/wordle_web_project">Backend code for webscraping, parsing and preparing data</a>
+                <p></p>
+                <a href="https://github.com/lalitha2019/wordle_web_project_demo4">Code for the most recent version</a>
+                <p></p>
+                <a href="https://github.com/lalitha2019/">My Github profile (includes code for other hobby projects as well as previous versions of this project)</a>
+                <p></p>
+            </div>
+        </div>
+
+        <div id="year_vals_div" data-year_vals='{{ years | tojson }}'></div>
+        <div id="month_vals_div" data-month_vals='{{ months | tojson }}'></div>
+        <script src="/static/js/demo6.js"></script>
+    </body>
+</html>
