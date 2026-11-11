@@ -88,10 +88,50 @@ def get_counts_by_month_for_year(year_val, month_val):
     answers_df = df.loc[(df['Year'] == year_val) & (df['Month'] == month_val), 'Answer']
     answers = answers_df.tolist()
     letter_counts = get_letter_counts(answers)
-    
     return letter_counts
 
 def get_years():
     year_list = list(set(df['Year'].tolist()))
     return year_list
 #============================================================================================
+
+def get_duplicate_answers(df_answer_lines):
+    duplicates = df_answer_lines[df_answer_lines.duplicated(subset=['Answer'], keep=False)]
+    return duplicates
+
+sorted_duplicates = get_duplicate_answers(df).sort_values(by='Answer')
+#.............................................................................................
+
+stat_vals = {'Total':[], 'Max':[], 'Min':[], 'Mean':[], 'Median':[], 'Mode':[]}
+
+def get_stats(letter_counts, ax):
+    
+
+    stat_vals['Total'] =  counts_df.sum(axis=ax).tolist()
+    stat_vals['Max'] =  counts_df.max(axis=ax).tolist()
+    stat_vals['Min'] = counts_df.min(axis=ax).tolist()
+    stat_vals['Mean'] = counts_df.min(axis=ax).tolist()
+    stat_vals['Median'] = counts_df.mean(axis=ax).tolist()
+    stat_vals['Mode'] = counts_df.median(axis=ax).tolist()
+    
+    return stat_vals
+
+answers = get_all_answers()
+letter_counts = get_letter_counts(answers)
+counts_df = pd.DataFrame(letter_counts, index=letters, columns=positions)
+print(counts_df.describe(include='all'))
+
+counts_df_T = counts_df.T
+print(counts_df_T.describe(include='all'))
+'''
+stats = get_stats(letter_counts, 0)
+print(stats)
+df_stat_vals =pd.DataFrame(stat_vals.values(), index=stat_vals.keys(), columns=positions)
+print(df_stat_vals)
+stats = get_stats(letter_counts, 1)
+print(stats)
+df_stat_vals =pd.DataFrame(stat_vals.values(), index=stat_vals.keys(), columns=letters)
+print(df_stat_vals)
+'''
+
+
