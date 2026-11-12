@@ -94,44 +94,151 @@ def get_years():
     year_list = list(set(df['Year'].tolist()))
     return year_list
 #============================================================================================
+df_duplicates = df[df.duplicated(subset=['Answer'], keep="first")]
+df_duplicates_answers_list = df_duplicates['Answer'].tolist()
 
-def get_duplicate_answers(df_answer_lines):
-    duplicates = df_answer_lines[df_answer_lines.duplicated(subset=['Answer'], keep=False)]
-    return duplicates
+df_duplicates_all = df[df.duplicated(subset=['Answer'], keep=False)]
+sorted_duplicates = df_duplicates_all.sort_values(by='Answer')
 
-sorted_duplicates = get_duplicate_answers(df).sort_values(by='Answer')
-#.............................................................................................
+#print(df_duplicates.to_string(index=False))
+#print(sorted_duplicates.to_string(index=False))
+#print(df_duplicates_answers_list)
 
-stat_vals = {'Total':[], 'Max':[], 'Min':[], 'Mean':[], 'Median':[], 'Mode':[]}
-
-def get_stats(letter_counts, ax):
-    
-
-    stat_vals['Total'] =  counts_df.sum(axis=ax).tolist()
-    stat_vals['Max'] =  counts_df.max(axis=ax).tolist()
-    stat_vals['Min'] = counts_df.min(axis=ax).tolist()
-    stat_vals['Mean'] = counts_df.min(axis=ax).tolist()
-    stat_vals['Median'] = counts_df.mean(axis=ax).tolist()
-    stat_vals['Mode'] = counts_df.median(axis=ax).tolist()
-    
-    return stat_vals
-
+'''
 answers = get_all_answers()
 letter_counts = get_letter_counts(answers)
-counts_df = pd.DataFrame(letter_counts, index=letters, columns=positions)
-print(counts_df.describe(include='all'))
 
-counts_df_T = counts_df.T
-print(counts_df_T.describe(include='all'))
+index_names = [f"<button type='button' onclick=\"show_letter_graph('{letter_name}')\">{letter_name}</button>" for letter_name in letters]
+column_names = [f"<button type='button' onclick=\"show_position_graph('{position_name}')\">{position_name}</button>" for position_name in positions]
+
+counts_df = pd.DataFrame(letter_counts, index=index_names, columns=column_names)
 '''
-stats = get_stats(letter_counts, 0)
-print(stats)
-df_stat_vals =pd.DataFrame(stat_vals.values(), index=stat_vals.keys(), columns=positions)
-print(df_stat_vals)
-stats = get_stats(letter_counts, 1)
-print(stats)
-df_stat_vals =pd.DataFrame(stat_vals.values(), index=stat_vals.keys(), columns=letters)
-print(df_stat_vals)
+def color_max_min(val, min_val, max_val):
+    if val == min_val:
+        bg_color = 'gray'
+    elif val == max_val:
+        bg_color = 'green'
+    else:
+        bg_color = 'white'
+    return f'background-color: {bg_color};'
+
+def map_style_to_df(df):
+    min_val_list = []
+    max_val_list = []
+    column_names = df.columns
+    for column in column_names:
+        min_val_list.append(df[column].min())
+        max_val_list.append(df[column].max())
+
+    styled_df = (
+        df.style
+        .map(color_max_min, subset=[column_names[0]], min_val=min_val_list[0], max_val=max_val_list[0])
+        .map(color_max_min, subset=[column_names[1]], min_val=min_val_list[1], max_val=max_val_list[1])
+        .map(color_max_min, subset=[column_names[2]], min_val=min_val_list[2], max_val=max_val_list[2])
+        .map(color_max_min, subset=[column_names[3]], min_val=min_val_list[3], max_val=max_val_list[3])
+        .map(color_max_min, subset=[column_names[4]], min_val=min_val_list[4], max_val=max_val_list[4])
+    )
+
+    html_output = styled_df.to_html(escape=False, classes='data')
+    return html_output
+
+
+#html_output = style_table_df.to_html(escape=False)
 '''
+with open('table.html', 'w') as f:
+    f.write(map_style_to_df(counts_df))
+'''
+'''
+df = pd.DataFrame({
+    'Item': ['Apples', 'Bananas', 'Cherries'],
+    'Profit': [120, -45, 80],
+    'Stock': [50, 12, 5]
+})
+
+def highlight_low_stock(val, min_val, max_val):
+    if val == min_val:
+        bg_color = 'gray'
+    elif val == max_val:
+        bg_color = 'green'
+    else:
+        bg_color='white'
+    return f'background-color: {bg_color};' 
+
+styled_df = (
+    df.style
+    .map(highlight_low_stock, subset=['Stock'], min_val=5, max_val=50)
+    .map(highlight_low_stock, subset=['Profit'], min_val=-45, max_val=120)
+)
+
+html_output = styled_df.to_html()
+
+with open('table.html', 'w') as f:
+    f.write(html_output)
+'''
+#.............................................................................................
+'''
+answers = get_all_answers()
+letter_counts = get_letter_counts(answers)
+
+counts_df = pd.DataFrame(letter_counts, index=letters, columns=positions)
+
+print(counts_df)
+max_first = counts_df['first'].max()
+min_first = counts_df['first'].min()
+#print(max_first)
+
+def color_max_min(val):
+    if val == max_first:
+        color = 'green'
+    elif val == min_first:
+        color = 'gray'
+    else:
+        color = 'black'
+    return f'color: {color}; font-weight: bold;'
+
+# Apply only to the'Change' column and export to HTML
+styled_df = counts_df.style.map(color_max_min, subset=['first'])
+html_output = styled_df.to_html()
+with open('table.html', 'w') as f:
+    f.write(html_output)
+
+
+#to get min of a row
+min_val_for_A = counts_df.loc['A'].min()
+print(min_val_for_A)
+'''
+'''
+print("--------------------------------")
+print("Letter with max occurrences by position:")
+print("--------------------------------")
+for pos in positions:
+    print(pos,  counts_df[pos].idxmax())
+
+print("--------------------------------")
+print("Letter with max occurrences by position:")
+print("--------------------------------")
+for pos in positions:
+    print(pos ,  counts_df[pos].idxmin())
+
+print("--------------------------------")
+print("Max occurrences of letter were in:")
+print("--------------------------------")
+
+max_in_row = counts_df.eq(counts_df.max(axis=1), axis=0)
+print(max_in_row)
+
+print("--------------------------------")
+print("Least occurrences of letter were in:")
+print("--------------------------------")
+
+min_in_row = counts_df.eq(counts_df.min(axis=1), axis=0)
+
+min_cols = min_in_row.apply(lambda row: row[row].index.tolist(), axis=1)
+print(min_cols)
+'''
+
+
+
+
 
 
