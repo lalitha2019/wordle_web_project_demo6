@@ -63,7 +63,8 @@ def show_all_counts():
     global_vals['letter_name'] = None
 
     df = pd.DataFrame(global_vals['letter_counts'], index=index_names, columns=column_names)
-    table_html = df.to_html(escape=False, classes='data')
+    table_html = wc.map_style_to_df(df)
+    #table_html = df.to_html(escape=False, classes='data')
     return table_html
 
 def graph_all_counts():
@@ -106,8 +107,8 @@ def show_selected():
         global_vals['letter_counts'] = wc.get_counts_by_month_for_year(int(year), month)
     
     df = pd.DataFrame(global_vals['letter_counts'], index=index_names, columns=column_names)
-
-    table_html = df.to_html(escape=False, classes='data')
+    table_html = wc.map_style_to_df(df)
+    #table_html = df.to_html(escape=False, classes='data')
     plot_base64 = graph_counts()
     return jsonify({'table': table_html, 'graph': plot_base64})
 
